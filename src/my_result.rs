@@ -65,6 +65,24 @@ impl<T, E> MyResult<T, E> {
     }
 }
 
+impl<T, E> From<MyResult<T, E>> for Result<T, E> {
+    fn from(mr: MyResult<T, E>) -> Self {
+        match mr {
+            MyResult::Ok(v) => Ok(v),
+            MyResult::Err(e) => Err(e),
+        }
+    }
+}
+
+impl<T, E> From<Result<T, E>> for MyResult<T, E> {
+    fn from(res: Result<T, E>) -> Self {
+        match res {
+            Ok(v) => MyResult::Ok(v),
+            Err(e) => MyResult::Err(e),
+        }
+    }
+}
+
 impl<T: fmt::Debug, E: fmt::Debug> fmt::Debug for MyResult<T, E> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -180,5 +198,33 @@ mod tests {
         let val: MyResult<i32, &str> = MyResult::Err("error");
         let debug_str = format!("{:?}", val);
         assert_eq!(debug_str, "MyResult::Err(\"error\")");
+    }
+
+    #[test]
+    fn test_myresult_into_result_ok() {
+        let my_res: MyResult<i32, &str> = MyResult::Ok(10);
+        let std_res: Result<i32, &str> = my_res.into();
+        assert_eq!(std_res, Ok(10));
+    }
+
+    #[test]
+    fn test_myresult_into_result_err() {
+        let my_res: MyResult<i32, &str> = MyResult::Err("error");
+        let std_res: Result<i32, &str> = my_res.into();
+        assert_eq!(std_res, Err("error"));
+    }
+
+    #[test]
+    fn test_result_into_myresult_ok() {
+        let std_res: Result<i32, &str> = Ok(20);
+        let my_res: MyResult<i32, &str> = std_res.into();
+        assert_eq!(my_res, MyResult::Ok(20));
+    }
+
+    #[test]
+    fn test_result_into_myresult_err() {
+        let std_res: Result<i32, &str> = Err("fail");
+        let my_res: MyResult<i32, &str> = std_res.into();
+        assert_eq!(my_res, MyResult::Err("fail"));
     }
 }
