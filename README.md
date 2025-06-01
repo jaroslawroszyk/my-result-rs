@@ -9,6 +9,7 @@ A custom implementation of the `Result` type called `MyResult`, designed for lea
 - Simple enum `MyResult<T, E>` with variants `Ok(T)` and `Err(E)`
 - Commonly used methods like `map`, `and_then`, `unwrap`, `unwrap_or`
 - Macros for ergonomic usage: `my_ok!`, `my_err!`, `my_try!`
+- Implementations of `From` for easy conversion to/from `std::result::Result`
 - Designed for educational purposes and to understand Rust’s error handling internals
 
 ---
@@ -32,10 +33,23 @@ fn do_calc() -> MyResult<i32, &'static str> {
 fn main() {
     match do_calc() {
         MyResult::Ok(value) => println!("Calculation result: {}", value),
-        MyResult::Err(err) => println!("Calculation error: {}", err),
+        MyResult::Err(err)   => println!("Calculation error: {}", err),
     }
 }
 ````
+
+---
+
+## Conversion between `MyResult` and `std::result::Result`
+
+You can easily convert between `MyResult<T, E>` and the standard `Result<T, E>` thanks to the implemented `From` traits:
+
+```rust
+let my_res: MyResult<i32, &str> = Ok(42).into(); // std Result -> MyResult
+let std_res: Result<i32, &str> = my_res.into();  // MyResult -> std Result
+```
+
+This improves interoperability with Rust’s standard library and ecosystem.
 
 ---
 
@@ -71,4 +85,4 @@ This project is licensed under the MIT License.
 
 ---
 
-Feel free to open issues or submit pull requests if you want to contribute or suggest improvements!
+### Feel free to open issues or submit pull requests if you want to contribute or suggest improvements!
