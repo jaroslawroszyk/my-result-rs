@@ -25,4 +25,3 @@ impl<T, E> MyTry for MyResult<T, E> {
         MyResult::Err(e)
     }
 }
-

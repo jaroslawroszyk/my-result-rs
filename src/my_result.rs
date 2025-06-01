@@ -1,4 +1,6 @@
-#[derive(Debug, PartialEq, Eq, Clone)]
+use std::fmt;
+
+#[derive(PartialEq, Eq, Clone)]
 pub enum MyResult<T, E> {
     Ok(T),
     Err(E),
@@ -59,6 +61,15 @@ impl<T, E> MyResult<T, E> {
         match self {
             MyResult::Ok(v) => f(v),
             MyResult::Err(e) => MyResult::Err(e),
+        }
+    }
+}
+
+impl<T: fmt::Debug, E: fmt::Debug> fmt::Debug for MyResult<T, E> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            MyResult::Ok(val) => f.debug_tuple("MyResult::Ok").field(val).finish(),
+            MyResult::Err(err) => f.debug_tuple("MyResult::Err").field(err).finish(),
         }
     }
 }
@@ -151,6 +162,23 @@ mod tests {
         let err = MyResult::Err("initial fail");
 
         assert_eq!(ok.and_then(square_if_positive), MyResult::Ok(16));
-        assert_eq!(err.and_then(square_if_positive), MyResult::Err("initial fail"));
+        assert_eq!(
+            err.and_then(square_if_positive),
+            MyResult::Err("initial fail")
+        );
+    }
+
+    #[test]
+    fn test_debug_impl_for_ok() {
+        let val: MyResult<i32, &str> = MyResult::Ok(42);
+        let debug_str = format!("{:?}", val);
+        assert_eq!(debug_str, "MyResult::Ok(42)");
+    }
+
+    #[test]
+    fn test_debug_impl_for_err() {
+        let val: MyResult<i32, &str> = MyResult::Err("error");
+        let debug_str = format!("{:?}", val);
+        assert_eq!(debug_str, "MyResult::Err(\"error\")");
     }
 }
