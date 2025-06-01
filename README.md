@@ -39,7 +39,7 @@ fn main() {
 
 ---
 
-## 🧠 4. Differences Compared to `std::result::Result`
+## 🧠 Differences Compared to `std::result::Result`
 
 | Feature                  | `std::result::Result`          | `MyResult`               |
 | ------------------------ | ------------------------------ | ------------------------ |
